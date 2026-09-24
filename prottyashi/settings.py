@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # 3. ALLOWED HOSTS: Updated for PythonAnywhere (Replace 'yourusername' with your actual username)
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'yourusername.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'munazer.pythonanywhere.com']
 
 
 # Application definition
