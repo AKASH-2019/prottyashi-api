@@ -94,9 +94,13 @@ WSGI_APPLICATION = 'prottyashi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-# 5. PERSISTENT SQLITE3 SETUP: Point to the mounted network volume '/data/' when running live on Render
+# settings.py
+# 5. PERSISTENT SQLITE3 SETUP: Safely initialize target folder path structures
 if os.environ.get('RENDER'):
-    DB_PATH = '/data/db.sqlite3'
+    DB_DIR = '/data'
+    # Force Python to create the /data/ directory if it doesn't exist yet
+    os.makedirs(DB_DIR, exist_ok=True)
+    DB_PATH = os.path.join(DB_DIR, 'db.sqlite3')
 else:
     DB_PATH = BASE_DIR / 'db.sqlite3'
 
