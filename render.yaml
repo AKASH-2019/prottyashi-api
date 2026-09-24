@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: prottyashi-api
+    runtime: python
+    # 1. Mount a persistent disk so your SQLite database is safe
+    disk:
+      name: sqlite-data
+      mountPath: /data
+      sizeGB: 1
+    # 2. Commands to install packages, build static assets, and update the schema
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: gunicorn prottyashi.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.5
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
