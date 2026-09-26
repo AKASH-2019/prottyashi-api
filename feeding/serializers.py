@@ -73,3 +73,17 @@ class DashboardSerializer(
     banana_shortfall = serializers.IntegerField()
 
     shortfall_schools = serializers.ListField()
+
+
+class DeliverySerializer(serializers.ModelSerializer):
+
+    def validate(self, attrs):
+
+        date = attrs.get("date")
+
+        if Holiday.objects.filter(date=date).exists():
+            raise serializers.ValidationError(
+                "This date is a holiday. Delivery entry is not allowed."
+            )
+
+        return attrs
