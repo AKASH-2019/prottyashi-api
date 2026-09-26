@@ -1,7 +1,7 @@
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer
 )
-
+from rest_framework import serializers
 
 class CustomTokenObtainPairSerializer(
     TokenObtainPairSerializer
@@ -28,3 +28,5 @@ class CustomTokenObtainPairSerializer(
         # print(data)
 
         return data
+
+

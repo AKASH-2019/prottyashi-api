@@ -3,6 +3,7 @@ from .models import (
     Holiday,
     RationSetting,
     Delivery,
+    FoodPrice
 )
 
 @admin.register(Holiday)
@@ -58,4 +59,22 @@ class DeliveryAdmin(
         "school__name_bn",
         "school__school_code",
         "school__emis_code",
+    )
+
+
+
+
+
+@admin.register(FoodPrice)
+class FoodPriceAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "bun_unit_price",
+        "egg_unit_price",
+        "banana_unit_price",
+        "updated_at",
+    )
+
+    readonly_fields = (
+        "updated_at",
     )

@@ -13,3 +13,5 @@ class CustomTokenObtainPairView(
     serializer_class = (
         CustomTokenObtainPairSerializer
     )
+
+

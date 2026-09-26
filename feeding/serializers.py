@@ -98,3 +98,55 @@ class Form4Serializer(serializers.Serializer):
     egg = serializers.IntegerField()
 
     banana = serializers.IntegerField()
+
+
+class Form07RowSerializer(serializers.Serializer):
+    sl = serializers.IntegerField()
+
+    school_name = serializers.CharField()
+
+    emis_code = serializers.CharField()
+
+    bun_chalan_count = serializers.IntegerField()
+
+    bun_total = serializers.IntegerField()
+
+    egg_chalan_count = serializers.IntegerField()
+
+    egg_total = serializers.IntegerField()
+
+    banana_chalan_count = serializers.IntegerField()
+
+    banana_total = serializers.IntegerField()
+
+
+class Form10Serializer(serializers.Serializer):
+
+    food_name = serializers.CharField()
+
+    quantity = serializers.IntegerField()
+
+    unit_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    food_total = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=2
+    )
+
+    service_unit_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    service_total = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=2
+    )
+
+    grand_total = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=2
+    )
