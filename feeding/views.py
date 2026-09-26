@@ -166,7 +166,7 @@ class Form07ReportView(APIView):
 
         rows = []
 
-        schools = School.objects.all().order_by("name")
+        schools = School.objects.all().order_by("name_bn")
 
         sl = 1
 
@@ -180,7 +180,7 @@ class Form07ReportView(APIView):
 
             rows.append({
                 "sl": sl,
-                "school_name": school.name,
+                "school_name": school.name_bn,
                 "emis_code": school.emis_code,
 
                 "bun_chalan_count":
@@ -244,7 +244,7 @@ class Form10ReportView(APIView):
 
         overall_total = Decimal("0")
 
-        schools = School.objects.all().order_by("name")
+        schools = School.objects.all().order_by("name_bn")
 
         for school in schools:
 
@@ -290,7 +290,7 @@ class Form10ReportView(APIView):
 
                 "school_id": school.id,
 
-                "school_name": school.name,
+                "school_name": school.name_bn,
 
                 "emis_code": school.emis_code,
 
@@ -383,7 +383,7 @@ class Form12And13ReportView(APIView):
 
         rows = []
 
-        schools = School.objects.all().order_by("name")
+        schools = School.objects.all().order_by("name_bn")
 
         sl = 1
 
@@ -456,7 +456,7 @@ class Form12And13ReportView(APIView):
 
                 "school_id": school.id,
 
-                "school_name": school.name,
+                "school_name": school.name_bn,
 
                 "emis_code": school.emis_code,
 
