@@ -64,10 +64,7 @@ class DeliverySerializer(
         return attrs
 
 
-class DashboardSerializer(
-    serializers.Serializer
-):
-
+class DashboardSerializer(serializers.Serializer):
     date = serializers.DateField()
 
     bun_demand = serializers.IntegerField()
@@ -85,3 +82,19 @@ class DashboardSerializer(
     shortfall_schools = serializers.ListField()
 
 
+
+class Form4Serializer(serializers.Serializer):
+
+    sl = serializers.IntegerField()
+
+    food_receive_date = serializers.DateField()
+
+    chalan_no = serializers.CharField()
+
+    chalan_date = serializers.DateField()
+
+    bun = serializers.IntegerField()
+
+    egg = serializers.IntegerField()
+
+    banana = serializers.IntegerField()

@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
 
-from .views import HolidayViewSet, RationSettingViewSet, DeliveryViewSet, DashboardAPIView
+from .views import HolidayViewSet, RationSettingViewSet, DeliveryViewSet, DashboardAPIView, Form4ReportAPIView
 
 router = DefaultRouter()
 
@@ -24,6 +24,7 @@ router.register(
     basename="deliveries"
 )
 
+
 urlpatterns = router.urls
 
 urlpatterns += [
@@ -31,5 +32,10 @@ urlpatterns += [
         "dashboard/",
         DashboardAPIView.as_view(),
         name="dashboard"
+    ),
+    path(
+        "reports/form4/",
+        Form4ReportAPIView.as_view(),
+        name="form4-report",
     ),
 ]
