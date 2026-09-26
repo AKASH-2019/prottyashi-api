@@ -1,41 +1,61 @@
 from django.contrib import admin
-from .models import Holiday, RationSetting, Delivery
-
+from .models import (
+    Holiday,
+    RationSetting,
+    Delivery,
+)
 
 @admin.register(Holiday)
 class HolidayAdmin(admin.ModelAdmin):
-    list_display = ["date", "title"]
-    search_fields = ["title"]
-    ordering = ["date"]
+
+    list_display = (
+        "id",
+        "date",
+        "title",
+        "created_at",
+    )
+
+    search_fields = (
+        "title",
+    )
+
 
 @admin.register(RationSetting)
-class RationSettingAdmin(admin.ModelAdmin):
+class RationSettingAdmin(
+    admin.ModelAdmin
+):
 
-    list_display = [
-        "effective_date",
+    list_display = (
+        "id",
         "bun_per_student",
         "egg_per_student",
         "banana_per_student",
-    ]
+    )
+
 
 @admin.register(Delivery)
-class DeliveryAdmin(admin.ModelAdmin):
+class DeliveryAdmin(
+    admin.ModelAdmin
+):
 
-    list_display = [
+    list_display = (
+        "id",
         "school",
         "date",
         "bun_delivered",
         "egg_delivered",
         "banana_delivered",
         "entered_by",
-    ]
+        "created_at",
+    )
 
-    list_filter = [
+    list_filter = (
         "date",
         "school",
-    ]
+    )
 
-    search_fields = [
-        "school__school_code",
+    search_fields = (
         "school__name_bn",
-    ]
+        "school__school_code",
+        "school__emis_code",
+    )

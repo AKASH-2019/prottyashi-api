@@ -6,7 +6,6 @@ from .models import (
     RationSetting,
     Delivery,
 )
-
 from .services import is_working_day
 
 
@@ -34,6 +33,11 @@ class DeliverySerializer(
 
     school_name = serializers.CharField(
         source="school.name_bn",
+        read_only=True
+    )
+
+    entered_by_name = serializers.CharField(
+        source="entered_by.username",
         read_only=True
     )
 
@@ -79,3 +83,5 @@ class DashboardSerializer(
     banana_shortfall = serializers.IntegerField()
 
     shortfall_schools = serializers.ListField()
+
+

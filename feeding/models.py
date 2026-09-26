@@ -45,7 +45,6 @@ class Holiday(models.Model):
     def __str__(self):
         return f"{self.date} - {self.title}"
 
-
 # class Delivery(models.Model):
 
 #     school = models.ForeignKey(
@@ -66,17 +65,24 @@ class Holiday(models.Model):
 #     )
 
 #     entered_by = models.ForeignKey(
-#         "accounts.User",
+#         settings.AUTH_USER_MODEL,
 #         on_delete=models.SET_NULL,
 #         null=True
 #     )
 
-#     created_at = models.DateTimeField(auto_now_add=True)
+#     created_at = models.DateTimeField(
+#         auto_now_add=True
+#     )
 
-#     updated_at = models.DateTimeField(auto_now=True)
+#     updated_at = models.DateTimeField(
+#         auto_now=True
+#     )
 
 #     class Meta:
-#         unique_together = ("school", "date")
+#         unique_together = (
+#             "school",
+#             "date"
+#         )
 
 
 class Delivery(models.Model):
@@ -88,19 +94,39 @@ class Delivery(models.Model):
 
     date = models.DateField()
 
-    bun_delivered = models.PositiveIntegerField()
-
-    egg_delivered = models.PositiveIntegerField()
-
-    banana_delivered = models.PositiveIntegerField()
-
-    chalan_photo = models.ImageField(
-        upload_to="chalans/"
-    )
-
     entered_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
+        null=True
+    )
+
+    # Bun
+    bun_delivered = models.PositiveIntegerField(default=0)
+    bun_chalan_no = models.CharField(max_length=100, blank=True, null=True)
+    bun_chalan_date = models.DateField(blank=True, null=True)
+    bun_chalan_image = models.ImageField(
+        upload_to="chalans/bun/",
+        blank=True,
+        null=True
+    )
+
+    # Egg
+    egg_delivered = models.PositiveIntegerField(default=0)
+    egg_chalan_no = models.CharField(max_length=100, blank=True, null=True)
+    egg_chalan_date = models.DateField(blank=True, null=True)
+    egg_chalan_image = models.ImageField(
+        upload_to="chalans/egg/",
+        blank=True,
+        null=True
+    )
+
+    # Banana
+    banana_delivered = models.PositiveIntegerField(default=0)
+    banana_chalan_no = models.CharField(max_length=100, blank=True, null=True)
+    banana_chalan_date = models.DateField(blank=True, null=True)
+    banana_chalan_image = models.ImageField(
+        upload_to="chalans/banana/",
+        blank=True,
         null=True
     )
 
@@ -108,12 +134,11 @@ class Delivery(models.Model):
         auto_now_add=True
     )
 
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )
-
     class Meta:
         unique_together = (
             "school",
             "date"
         )
+
+    def __str__(self):
+        return f"{self.school.name_bn} - {self.date}"
