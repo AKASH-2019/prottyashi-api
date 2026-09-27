@@ -357,17 +357,13 @@ from datetime import date
 from feeding.models import Delivery
 
 
-def get_staff_dashboard_data(
-    staff,
-    report_date=None
-):
+def get_staff_dashboard_data(staff, report_date=None):
 
     if report_date is None:
         report_date = date.today()
 
     deliveries = Delivery.objects.filter(
-        staff=staff,
-        date=report_date
+        entered_by=staff
     ).select_related("school")
 
     total_bun = 0
@@ -382,74 +378,59 @@ def get_staff_dashboard_data(
         egg = delivery.egg_delivered or 0
         banana = delivery.banana_delivered or 0
 
-        total_food = (
-            bun +
-            egg +
-            banana
-        )
-
         total_bun += bun
         total_egg += egg
         total_banana += banana
 
         school_list.append({
-            "school_id":
-                delivery.school.id,
+            "school_id": delivery.school.id,
+            "school_name": delivery.school.name_bn,
+            "school_code": delivery.school.school_code,
+            "emis_code": delivery.school.emis_code,
+            "student_count": delivery.school.student_count,
 
-            "school_name":
-                delivery.school.name_bn,
+            "bun_delivered": bun,
+            "egg_delivered": egg,
+            "banana_delivered": banana,
 
-            "school_code":
-                delivery.school.school_code,
+            "total_food": bun + egg + banana,
 
-            "emis_code":
-                delivery.school.emis_code,
+            # Bun Chalan
+            "bun_chalan_no": delivery.bun_chalan_no,
+            "bun_chalan_date": delivery.bun_chalan_date,
+            "bun_chalan_image": (
+                delivery.bun_chalan_image.url
+                if delivery.bun_chalan_image
+                else None
+            ),
 
-            "student_count":
-                delivery.school.student_count,
+            # Egg Chalan
+            "egg_chalan_no": delivery.egg_chalan_no,
+            "egg_chalan_date": delivery.egg_chalan_date,
+            "egg_chalan_image": (
+                delivery.egg_chalan_image.url
+                if delivery.egg_chalan_image
+                else None
+            ),
 
-            "bun_delivered":
-                bun,
-
-            "egg_delivered":
-                egg,
-
-            "banana_delivered":
-                banana,
-
-            "total_food":
-                total_food,
+            # Banana Chalan
+            "banana_chalan_no": delivery.banana_chalan_no,
+            "banana_chalan_date": delivery.banana_chalan_date,
+            "banana_chalan_image": (
+                delivery.banana_chalan_image.url
+                if delivery.banana_chalan_image
+                else None
+            ),
         })
 
     return {
-
-        "date":
-            report_date,
-
-        "staff_id":
-            staff.id,
-
-        "staff_name":
-            staff.get_full_name()
-            or staff.username,
-
-        "total_schools":
-            deliveries.count(),
-
-        "total_bun":
-            total_bun,
-
-        "total_egg":
-            total_egg,
-
-        "total_banana":
-            total_banana,
-
-        "total_food":
-            total_bun +
-            total_egg +
-            total_banana,
-
-        "schools":
-            school_list,
+        "date": report_date,
+        "staff_id": staff.id,
+        "staff_name": getattr(staff, "username", ""),
+        "total_schools": len(school_list),
+        "total_bun": total_bun,
+        "total_egg": total_egg,
+        "total_banana": total_banana,
+        "total_food": total_bun + total_egg + total_banana,
+        "schools": school_list,
     }
