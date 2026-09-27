@@ -24,6 +24,7 @@ def get_current_ration():
 def calculate_demand(school):
 
     ration = get_current_ration()
+    print("RATION =", ration)
 
     return {
         "bun":
@@ -43,6 +44,8 @@ def calculate_demand(school):
 def calculate_school_demand(school):
 
     ration = get_current_ration()
+    print("RATION INSIDE DEMAND =", ration)
+
 
     if not ration:
         raise Exception(
