@@ -350,3 +350,106 @@ def get_daily_delivery_report(report_date):
         "schools": report_rows,
         "totals": totals,
     }
+
+
+from datetime import date
+
+from feeding.models import Delivery
+
+
+def get_staff_dashboard_data(
+    staff,
+    report_date=None
+):
+
+    if report_date is None:
+        report_date = date.today()
+
+    deliveries = Delivery.objects.filter(
+        staff=staff,
+        date=report_date
+    ).select_related("school")
+
+    total_bun = 0
+    total_egg = 0
+    total_banana = 0
+
+    school_list = []
+
+    for delivery in deliveries:
+
+        bun = delivery.bun_delivered or 0
+        egg = delivery.egg_delivered or 0
+        banana = delivery.banana_delivered or 0
+
+        total_food = (
+            bun +
+            egg +
+            banana
+        )
+
+        total_bun += bun
+        total_egg += egg
+        total_banana += banana
+
+        school_list.append({
+            "school_id":
+                delivery.school.id,
+
+            "school_name":
+                delivery.school.name_bn,
+
+            "school_code":
+                delivery.school.school_code,
+
+            "emis_code":
+                delivery.school.emis_code,
+
+            "student_count":
+                delivery.school.student_count,
+
+            "bun_delivered":
+                bun,
+
+            "egg_delivered":
+                egg,
+
+            "banana_delivered":
+                banana,
+
+            "total_food":
+                total_food,
+        })
+
+    return {
+
+        "date":
+            report_date,
+
+        "staff_id":
+            staff.id,
+
+        "staff_name":
+            staff.get_full_name()
+            or staff.username,
+
+        "total_schools":
+            deliveries.count(),
+
+        "total_bun":
+            total_bun,
+
+        "total_egg":
+            total_egg,
+
+        "total_banana":
+            total_banana,
+
+        "total_food":
+            total_bun +
+            total_egg +
+            total_banana,
+
+        "schools":
+            school_list,
+    }
