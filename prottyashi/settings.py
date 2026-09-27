@@ -154,17 +154,29 @@ SIMPLE_JWT = {
 
 
 # 7. CROSS-ORIGIN RESOURCE SHARING (CORS): Routes incoming requests from the frontend client safely
+# if DEBUG:
+#     CORS_ALLOW_ALL_ORIGINS = True  # Allows open connections during local debugging phases
+# else:
+#     CORS_ALLOW_ALL_ORIGINS = False
+#     CORS_ALLOWED_ORIGINS = [
+#         "http://localhost:3000",
+#         "http://127.0.0.1:3000",
+#         "https://prottyashi.vercel.app",
+#         "http://localhost:5173",  # Vite standard development port fallback
+#         # "https://your-frontend-domain.com",  # TODO: Add your live frontend URL here
+#     ]
+
 if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True  # Allows open connections during local debugging phases
+    CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOW_ALL_ORIGINS = False
     CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://prottyashi.vercel.app",
-        "http://localhost:5173",  # Vite standard development port fallback
-        # "https://your-frontend-domain.com",  # TODO: Add your live frontend URL here
+        "https://prottyashi-frontend.vercel.app",
     ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://prottyashi-frontend.vercel.app",
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
