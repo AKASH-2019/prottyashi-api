@@ -14,12 +14,24 @@ def is_working_day(date):
 
     return not holiday_exists
 
+# def get_current_ration():
+#     return (
+#         RationSetting.objects
+#         .order_by("-effective_date")
+#         .first()
+#     )
 def get_current_ration():
-    return (
+
+    ration = (
         RationSetting.objects
         .order_by("-effective_date")
         .first()
     )
+
+    print("RATION COUNT =", RationSetting.objects.count())
+    print("RATION OBJ =", ration)
+
+    return ration
 
 def calculate_demand(school):
 
