@@ -229,149 +229,113 @@ class Form07ReportView(APIView):
         })
 
 
+from decimal import Decimal
+from django.db.models import Sum
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from accounts.models import School
+from feeding.models import Delivery, FoodPrice
+
+
 class Form10ReportView(APIView):
 
     def get(self, request):
 
-        month = request.GET.get("month")
-        year = request.GET.get("year")
+        month = int(request.GET.get("month"))
+        year = int(request.GET.get("year"))
 
-        BUN_PRICE = Decimal("22.883")
-        EGG_PRICE = Decimal("13.543")
-        BANANA_PRICE = Decimal("9.807")
+        price = FoodPrice.objects.first()
 
-        schools_data = []
-
-        overall_total = Decimal("0")
-
-        schools = School.objects.all().order_by("name_bn")
-
-        for school in schools:
-
-            deliveries = Delivery.objects.filter(
-                school=school,
+        bun_qty = (
+            Delivery.objects.filter(
                 date__month=month,
                 date__year=year
-            )
-
-            bun_qty = deliveries.aggregate(
+            ).aggregate(
                 total=Sum("bun_delivered")
             )["total"] or 0
+        )
 
-            egg_qty = deliveries.aggregate(
+        egg_qty = (
+            Delivery.objects.filter(
+                date__month=month,
+                date__year=year
+            ).aggregate(
                 total=Sum("egg_delivered")
             )["total"] or 0
+        )
 
-            banana_qty = deliveries.aggregate(
+        banana_qty = (
+            Delivery.objects.filter(
+                date__month=month,
+                date__year=year
+            ).aggregate(
                 total=Sum("banana_delivered")
             )["total"] or 0
+        )
 
-            bun_total = round(
-                Decimal(bun_qty) * BUN_PRICE, 2
-            )
+        bun_unit_price = price.bun_price
+        egg_unit_price = price.egg_price
+        banana_unit_price = price.banana_price
 
-            egg_total = round(
-                Decimal(egg_qty) * EGG_PRICE, 2
-            )
+        bun_food_total = bun_qty * bun_unit_price
+        egg_food_total = egg_qty * egg_unit_price
+        banana_food_total = banana_qty * banana_unit_price
 
-            banana_total = round(
-                Decimal(banana_qty) * BANANA_PRICE, 2
-            )
-
-            school_total = (
-                bun_total +
-                egg_total +
-                banana_total
-            )
-
-            overall_total += school_total
-
-            schools_data.append({
-
-                "school_id": school.id,
-
-                "school_name": school.name_bn,
-
-                "emis_code": school.emis_code,
-
-                "items": [
-
-                    {
-                        "food_name": "বনরুটি",
-
-                        "quantity": bun_qty,
-
-                        "unit_price": float(BUN_PRICE),
-
-                        "food_total": float(bun_total),
-
-                        "service_unit_price": 0,
-
-                        "service_total": 0,
-
-                        "grand_total": float(
-                            bun_total
-                        ),
-                    },
-
-                    {
-                        "food_name": "সিদ্ধ ডিম",
-
-                        "quantity": egg_qty,
-
-                        "unit_price": float(EGG_PRICE),
-
-                        "food_total": float(egg_total),
-
-                        "service_unit_price": 0,
-
-                        "service_total": 0,
-
-                        "grand_total": float(
-                            egg_total
-                        ),
-                    },
-
-                    {
-                        "food_name": "কলা",
-
-                        "quantity": banana_qty,
-
-                        "unit_price": float(
-                            BANANA_PRICE
-                        ),
-
-                        "food_total": float(
-                            banana_total
-                        ),
-
-                        "service_unit_price": 0,
-
-                        "service_total": 0,
-
-                        "grand_total": float(
-                            banana_total
-                        ),
-                    },
-
-                ],
-
-                "school_total": float(
-                    school_total
-                ),
-            })
+        grand_total = (
+            bun_food_total +
+            egg_food_total +
+            banana_food_total
+        )
 
         return Response({
+            "month": month,
+            "year": year,
 
-            "month": int(month),
+            "items": [
+                {
+                    "food_name": "বনরুটি",
+                    "quantity": bun_qty,
+                    "unit_price": bun_unit_price,
+                    "food_total": bun_food_total,
+                    "service_unit_price": 0,
+                    "service_total": 0,
+                    "grand_total": bun_food_total,
+                },
+                {
+                    "food_name": "সিদ্ধ ডিম",
+                    "quantity": egg_qty,
+                    "unit_price": egg_unit_price,
+                    "food_total": egg_food_total,
+                    "service_unit_price": 0,
+                    "service_total": 0,
+                    "grand_total": egg_food_total,
+                },
+                {
+                    "food_name": "কলা",
+                    "quantity": banana_qty,
+                    "unit_price": banana_unit_price,
+                    "food_total": banana_food_total,
+                    "service_unit_price": 0,
+                    "service_total": 0,
+                    "grand_total": banana_food_total,
+                }
+            ],
 
-            "year": int(year),
+            "summary": {
+                "total_quantity":
+                    bun_qty +
+                    egg_qty +
+                    banana_qty,
 
-            "schools": schools_data,
+                "food_total":
+                    grand_total,
 
-            "overall_total": float(
-                overall_total
-            ),
+                "service_total": 0,
+
+                "grand_total":
+                    grand_total
+            }
         })
 
 class Form12And13ReportView(APIView):
