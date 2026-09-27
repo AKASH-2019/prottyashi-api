@@ -165,16 +165,12 @@ def get_queryset(self):
 #     shortfall_schools = []
 
 
-def get_dashboard_data(
-    report_date=None
-):
+def get_dashboard_data(report_date=None):
 
     if report_date is None:
         report_date = date.today()
 
-    schools = School.objects.filter(
-        active=True
-    )
+    schools = School.objects.filter(active=True)
 
     bun_demand = 0
     egg_demand = 0
@@ -188,11 +184,9 @@ def get_dashboard_data(
 
     for school in schools:
 
-        demand = (
-            calculate_school_demand_by_date(
-                school,
-                report_date
-            )
+        demand = calculate_school_demand_by_date(
+            school,
+            report_date
         )
 
         delivery = Delivery.objects.filter(
@@ -200,83 +194,49 @@ def get_dashboard_data(
             date=report_date
         ).first()
 
-        bun_demand += demand[
-            "bun_demand"
-        ]
-
-        egg_demand += demand[
-            "egg_demand"
-        ]
-
-        banana_demand += demand[
-            "banana_demand"
-        ]
+        bun_demand += demand["bun_demand"]
+        egg_demand += demand["egg_demand"]
+        banana_demand += demand["banana_demand"]
 
         if delivery:
+            bun_delivered += delivery.bun_delivered
+            egg_delivered += delivery.egg_delivered
+            banana_delivered += delivery.banana_delivered
+        if (
+            not delivery
+            or delivery.bun_delivered < demand["bun_demand"]
+            or delivery.egg_delivered < demand["egg_demand"]
+            or delivery.banana_delivered < demand["banana_demand"]
+        ):
+            shortfall_schools.append({
+                "school_id": school.id,
+                "school_name": school.name_bn,
+                "bun_demand": demand["bun_demand"],
+                "bun_delivered": delivery.bun_delivered if delivery else 0,
+                "egg_demand": demand["egg_demand"],
+                "egg_delivered": delivery.egg_delivered if delivery else 0,
+                "banana_demand": demand["banana_demand"],
+                "banana_delivered": delivery.banana_delivered if delivery else 0,
+            })
 
-            bun_delivered += (
-                delivery.bun_delivered
-            )
+    return {
+        "date": report_date,
 
-            egg_delivered += (
-                delivery.egg_delivered
-            )
+        "bun_demand": bun_demand,
+        "bun_delivered": bun_delivered,
+        "bun_shortfall": bun_demand - bun_delivered,
 
-            banana_delivered += (
-                delivery.banana_delivered
-            )
+        "egg_demand": egg_demand,
+        "egg_delivered": egg_delivered,
+        "egg_shortfall": egg_demand - egg_delivered,
 
-        if delivery:
+        "banana_demand": banana_demand,
+        "banana_delivered": banana_delivered,
+        "banana_shortfall": banana_demand - banana_delivered,
 
-            bun_delivered += (
-                delivery.bun_delivered
-            )
+        "shortfall_schools": shortfall_schools,
+    }
 
-            egg_delivered += (
-                delivery.egg_delivered
-            )
-
-            banana_delivered += (
-                delivery.banana_delivered
-            )
-
-        return {
-
-            "date": report_date,
-
-            "bun_demand":
-                bun_demand,
-
-            "bun_delivered":
-                bun_delivered,
-
-            "bun_shortfall":
-                bun_demand -
-                bun_delivered,
-
-            "egg_demand":
-                egg_demand,
-
-            "egg_delivered":
-                egg_delivered,
-
-            "egg_shortfall":
-                egg_demand -
-                egg_delivered,
-
-            "banana_demand":
-                banana_demand,
-
-            "banana_delivered":
-                banana_delivered,
-
-            "banana_shortfall":
-                banana_demand -
-                banana_delivered,
-
-            "shortfall_schools":
-                shortfall_schools,
-        }
 
 def get_daily_delivery_report(report_date):
 

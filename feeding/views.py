@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter
 from .serializers import DeliverySerializer
 from collections import defaultdict
 from decimal import Decimal
+from datetime import datetime
 
 from .serializers import (
     HolidaySerializer,
@@ -67,16 +68,19 @@ class DeliveryViewSet(viewsets.ModelViewSet):
             entered_by=self.request.user
         )
 
-class DashboardAPIView(
-    APIView
-):
+class DashboardReportAPIView(APIView):
 
-    def get(
-        self,
-        request
-    ):
+    def get(self, request):
 
-        data = get_dashboard_data()
+        report_date = request.GET.get("date")
+
+        if report_date:
+            report_date = datetime.strptime(
+                report_date,
+                "%Y-%m-%d"
+            ).date()
+
+        data = get_dashboard_data(report_date)
 
         return Response(data)
 
