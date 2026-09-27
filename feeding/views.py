@@ -236,6 +236,7 @@ class Form10ReportView(APIView):
         year = int(request.GET.get("year"))
 
         price = FoodPrice.objects.first()
+        print("price", price.bun_unit_price)
 
         bun_qty = (
             Delivery.objects.filter(
@@ -264,9 +265,9 @@ class Form10ReportView(APIView):
             )["total"] or 0
         )
 
-        bun_unit_price = price.bun_price
-        egg_unit_price = price.egg_price
-        banana_unit_price = price.banana_price
+        bun_unit_price = price.bun_unit_price
+        egg_unit_price = price.egg_unit_price
+        banana_unit_price = price.banana_unit_price
 
         bun_food_total = bun_qty * bun_unit_price
         egg_food_total = egg_qty * egg_unit_price
