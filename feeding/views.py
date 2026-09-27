@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Holiday, RationSetting, Delivery
+from .models import Holiday, RationSetting, Delivery, FoodPrice
 from schools.models import School
 from django.db.models import Sum, Count, Q
 from rest_framework.filters import SearchFilter
