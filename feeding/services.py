@@ -187,7 +187,9 @@ def get_dashboard_data(report_date=None):
     if report_date is None:
         report_date = date.today()
 
-    schools = School.objects.filter(active=True)
+    schools = School.objects.filter(
+        active=True
+    )
 
     total_students = 0
 
@@ -198,9 +200,14 @@ def get_dashboard_data(report_date=None):
     total_food_delivered = 0
     total_shortfall = 0
 
+    schools_data = []
     shortfall_schools = []
 
     for school in schools:
+
+        student_count = (
+            school.student_count or 0
+        )
 
         delivery = Delivery.objects.filter(
             school=school,
@@ -222,10 +229,6 @@ def get_dashboard_data(report_date=None):
             if delivery else 0
         )
 
-        student_count = (
-            school.student_count or 0
-        )
-
         food_delivered = (
             bun +
             egg +
@@ -234,46 +237,68 @@ def get_dashboard_data(report_date=None):
 
         school_shortfall = max(
             0,
-            student_count - food_delivered
+            student_count -
+            food_delivered
         )
 
-        total_students += student_count
+        total_students += (
+            student_count
+        )
 
         total_bun += bun
         total_egg += egg
         total_banana += banana
 
-        total_food_delivered += food_delivered
-        total_shortfall += school_shortfall
+        total_food_delivered += (
+            food_delivered
+        )
+
+        total_shortfall += (
+            school_shortfall
+        )
+
+        school_data = {
+
+            "school_id":
+                school.id,
+
+            "school_name":
+                school.name_bn,
+
+            "school_code":
+                school.school_code,
+
+            "emis_code":
+                school.emis_code,
+
+            "student_count":
+                student_count,
+
+            "bun_delivered":
+                bun,
+
+            "egg_delivered":
+                egg,
+
+            "banana_delivered":
+                banana,
+
+            "food_delivered":
+                food_delivered,
+
+            "shortfall":
+                school_shortfall,
+        }
+
+        schools_data.append(
+            school_data
+        )
 
         if school_shortfall > 0:
 
-            shortfall_schools.append({
-
-                "school_id":
-                    school.id,
-
-                "school_name":
-                    school.name_bn,
-
-                "student_count":
-                    student_count,
-
-                "food_delivered":
-                    food_delivered,
-
-                "shortfall":
-                    school_shortfall,
-
-                "bun_delivered":
-                    bun,
-
-                "egg_delivered":
-                    egg,
-
-                "banana_delivered":
-                    banana,
-            })
+            shortfall_schools.append(
+                school_data
+            )
 
     return {
 
@@ -297,6 +322,9 @@ def get_dashboard_data(report_date=None):
 
         "total_banana":
             total_banana,
+
+        "schools":
+            schools_data,
 
         "shortfall_schools":
             shortfall_schools,
