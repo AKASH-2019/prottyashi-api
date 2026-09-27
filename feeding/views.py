@@ -9,13 +9,15 @@ from .serializers import DeliverySerializer
 from collections import defaultdict
 from decimal import Decimal
 from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
+from .permissions import HolidayPermission
 
 from .serializers import (
     HolidaySerializer,
     RationSettingSerializer,
     DeliverySerializer,
 )
-from .permissions import HolidayPermission
+
 
 from .services import (
     get_dashboard_data
@@ -454,3 +456,30 @@ class Form12And13ReportView(APIView):
 
             "schools": rows
         })
+
+
+from feeding.services import (
+    get_staff_dashboard_data
+)
+
+
+class StaffDashboardAPIView(
+    APIView
+):
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    def get(
+        self,
+        request
+    ):
+
+        data = (
+            get_staff_dashboard_data(
+                request.user
+            )
+        )
+
+        return Response(data)

@@ -53,7 +53,6 @@ urlpatterns += [
         Form12And13ReportView.as_view(),
         name="form12-13-report"
     ),
-
     path(
         "staff-dashboard/",
         StaffDashboardAPIView.as_view(),

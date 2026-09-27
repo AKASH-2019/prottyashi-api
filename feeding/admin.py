@@ -34,6 +34,20 @@ class RationSettingAdmin(
     )
 
 
+@admin.register(FoodPrice)
+class FoodPriceAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "bun_unit_price",
+        "egg_unit_price",
+        "banana_unit_price",
+        "updated_at",
+    )
+
+    readonly_fields = (
+        "updated_at",
+    )
+
 @admin.register(Delivery)
 class DeliveryAdmin(
     admin.ModelAdmin
@@ -61,20 +75,3 @@ class DeliveryAdmin(
         "school__emis_code",
     )
 
-
-
-
-
-@admin.register(FoodPrice)
-class FoodPriceAdmin(admin.ModelAdmin):
-
-    list_display = (
-        "bun_unit_price",
-        "egg_unit_price",
-        "banana_unit_price",
-        "updated_at",
-    )
-
-    readonly_fields = (
-        "updated_at",
-    )

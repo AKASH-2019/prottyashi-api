@@ -5,6 +5,7 @@ from .models import (
     Holiday,
     RationSetting,
     Delivery,
+    FoodPrice
 )
 from .services import is_working_day
 
