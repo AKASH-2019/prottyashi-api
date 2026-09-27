@@ -172,6 +172,7 @@ else:
     CORS_ALLOW_ALL_ORIGINS = False
     CORS_ALLOWED_ORIGINS = [
         "https://prottyashi-frontend.vercel.app",
+        "http://localhost:5173", 
     ]
 
 CSRF_TRUSTED_ORIGINS = [
