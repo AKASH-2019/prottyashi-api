@@ -228,16 +228,6 @@ class Form07ReportView(APIView):
             "rows": rows
         })
 
-
-from decimal import Decimal
-from django.db.models import Sum
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-from accounts.models import School
-from feeding.models import Delivery, FoodPrice
-
-
 class Form10ReportView(APIView):
 
     def get(self, request):
