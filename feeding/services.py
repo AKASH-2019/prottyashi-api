@@ -180,6 +180,8 @@ def get_queryset(self):
 #     shortfall_schools = []
 
 
+from datetime import date
+
 def get_dashboard_data(report_date=None):
 
     if report_date is None:
@@ -187,69 +189,117 @@ def get_dashboard_data(report_date=None):
 
     schools = School.objects.filter(active=True)
 
-    bun_demand = 0
-    egg_demand = 0
-    banana_demand = 0
+    total_students = 0
 
-    bun_delivered = 0
-    egg_delivered = 0
-    banana_delivered = 0
+    total_bun = 0
+    total_egg = 0
+    total_banana = 0
+
+    total_food_delivered = 0
+    total_shortfall = 0
 
     shortfall_schools = []
 
     for school in schools:
-
-        demand = calculate_school_demand_by_date(
-            school,
-            report_date
-        )
 
         delivery = Delivery.objects.filter(
             school=school,
             date=report_date
         ).first()
 
-        bun_demand += demand["bun_demand"]
-        egg_demand += demand["egg_demand"]
-        banana_demand += demand["banana_demand"]
+        bun = (
+            delivery.bun_delivered
+            if delivery else 0
+        )
 
-        if delivery:
-            bun_delivered += delivery.bun_delivered
-            egg_delivered += delivery.egg_delivered
-            banana_delivered += delivery.banana_delivered
-        if (
-            not delivery
-            or delivery.bun_delivered < demand["bun_demand"]
-            or delivery.egg_delivered < demand["egg_demand"]
-            or delivery.banana_delivered < demand["banana_demand"]
-        ):
+        egg = (
+            delivery.egg_delivered
+            if delivery else 0
+        )
+
+        banana = (
+            delivery.banana_delivered
+            if delivery else 0
+        )
+
+        student_count = (
+            school.student_count or 0
+        )
+
+        food_delivered = (
+            bun +
+            egg +
+            banana
+        )
+
+        school_shortfall = max(
+            0,
+            student_count - food_delivered
+        )
+
+        total_students += student_count
+
+        total_bun += bun
+        total_egg += egg
+        total_banana += banana
+
+        total_food_delivered += food_delivered
+        total_shortfall += school_shortfall
+
+        if school_shortfall > 0:
+
             shortfall_schools.append({
-                "school_id": school.id,
-                "school_name": school.name_bn,
-                "bun_demand": demand["bun_demand"],
-                "bun_delivered": delivery.bun_delivered if delivery else 0,
-                "egg_demand": demand["egg_demand"],
-                "egg_delivered": delivery.egg_delivered if delivery else 0,
-                "banana_demand": demand["banana_demand"],
-                "banana_delivered": delivery.banana_delivered if delivery else 0,
+
+                "school_id":
+                    school.id,
+
+                "school_name":
+                    school.name_bn,
+
+                "student_count":
+                    student_count,
+
+                "food_delivered":
+                    food_delivered,
+
+                "shortfall":
+                    school_shortfall,
+
+                "bun_delivered":
+                    bun,
+
+                "egg_delivered":
+                    egg,
+
+                "banana_delivered":
+                    banana,
             })
 
     return {
-        "date": report_date,
 
-        "bun_demand": bun_demand,
-        "bun_delivered": bun_delivered,
-        "bun_shortfall": bun_demand - bun_delivered,
+        "date":
+            report_date,
 
-        "egg_demand": egg_demand,
-        "egg_delivered": egg_delivered,
-        "egg_shortfall": egg_demand - egg_delivered,
+        "total_students":
+            total_students,
 
-        "banana_demand": banana_demand,
-        "banana_delivered": banana_delivered,
-        "banana_shortfall": banana_demand - banana_delivered,
+        "total_food_delivered":
+            total_food_delivered,
 
-        "shortfall_schools": shortfall_schools,
+        "total_shortfall":
+            total_shortfall,
+
+        "total_bun":
+            total_bun,
+
+        "total_egg":
+            total_egg,
+
+        "total_banana":
+            total_banana,
+
+        "shortfall_schools":
+            shortfall_schools,
     }
 
 
