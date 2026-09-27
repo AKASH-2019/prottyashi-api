@@ -463,23 +463,14 @@ from feeding.services import (
 )
 
 
-class StaffDashboardAPIView(
-    APIView
-):
+class StaffDashboardAPIView(APIView):
 
-    permission_classes = [
-        IsAuthenticated
-    ]
+    permission_classes = [IsAuthenticated]
 
-    def get(
-        self,
-        request
-    ):
+    def get(self, request):
 
-        data = (
-            get_staff_dashboard_data(
-                request.user
-            )
+        data = get_staff_dashboard_data(
+            request.user
         )
 
         return Response(data)

@@ -357,14 +357,23 @@ from datetime import date
 from feeding.models import Delivery
 
 
-def get_staff_dashboard_data(staff, report_date=None):
+def get_staff_dashboard_data(
+    staff,
+    report_date=None
+):
 
     if report_date is None:
         report_date = date.today()
 
-    deliveries = Delivery.objects.filter(
-        entered_by=staff
-    ).select_related("school")
+    deliveries = (
+        Delivery.objects
+        .filter(
+            entered_by=staff,
+            date=report_date
+        )
+        .select_related("school")
+        .order_by("school__name_bn")
+    )
 
     total_bun = 0
     total_egg = 0
@@ -395,7 +404,6 @@ def get_staff_dashboard_data(staff, report_date=None):
 
             "total_food": bun + egg + banana,
 
-            # Bun Chalan
             "bun_chalan_no": delivery.bun_chalan_no,
             "bun_chalan_date": delivery.bun_chalan_date,
             "bun_chalan_image": (
@@ -404,7 +412,6 @@ def get_staff_dashboard_data(staff, report_date=None):
                 else None
             ),
 
-            # Egg Chalan
             "egg_chalan_no": delivery.egg_chalan_no,
             "egg_chalan_date": delivery.egg_chalan_date,
             "egg_chalan_image": (
@@ -413,7 +420,6 @@ def get_staff_dashboard_data(staff, report_date=None):
                 else None
             ),
 
-            # Banana Chalan
             "banana_chalan_no": delivery.banana_chalan_no,
             "banana_chalan_date": delivery.banana_chalan_date,
             "banana_chalan_image": (
@@ -425,12 +431,25 @@ def get_staff_dashboard_data(staff, report_date=None):
 
     return {
         "date": report_date,
+
         "staff_id": staff.id,
-        "staff_name": getattr(staff, "username", ""),
+
+        "staff_name": (
+            staff.get_full_name()
+            or staff.username
+        ),
+
         "total_schools": len(school_list),
+
         "total_bun": total_bun,
         "total_egg": total_egg,
         "total_banana": total_banana,
-        "total_food": total_bun + total_egg + total_banana,
+
+        "total_food": (
+            total_bun +
+            total_egg +
+            total_banana
+        ),
+
         "schools": school_list,
     }
