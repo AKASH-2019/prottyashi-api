@@ -453,6 +453,10 @@ def get_staff_dashboard_data(
         .order_by("school__name_bn")
     )
 
+    overall_schools = School.objects.filter(
+        active=True
+    ).count()
+
     total_bun = 0
     total_egg = 0
     total_banana = 0
@@ -518,6 +522,7 @@ def get_staff_dashboard_data(
         ),
 
         "total_schools": len(school_list),
+        "overall_schools": overall_schools,
 
         "total_bun": total_bun,
         "total_egg": total_egg,
